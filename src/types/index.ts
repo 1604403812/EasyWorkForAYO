@@ -18,6 +18,8 @@ export interface ActivityForecast {
   contactPhone: string;
   createTime: string;
   status: 'pending' | 'reviewed' | 'completed';
+  isPermanent: boolean;
+  activityObject: string;
 }
 
 export interface ActivityReview {
