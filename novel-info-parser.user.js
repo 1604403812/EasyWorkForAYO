@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Novel Info Parser
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  解析网页小说信息并提供复制功能
 // @match        *://xn--pxtr7m.net/*
 // @match        *://sosad.net/*
@@ -16,6 +16,33 @@
 
     function addStyles() {
         GM_addStyle(`
+            .novel-float-btn {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                border: none;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+                z-index: 999998;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+            .novel-float-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+            }
+            .novel-float-btn svg {
+                width: 24px;
+                height: 24px;
+            }
             .novel-modal-overlay {
                 position: fixed;
                 top: 0;
@@ -260,7 +287,35 @@
         showToast('JSON数据已复制到剪贴板');
     }
 
+    function createFloatButton() {
+        const btn = document.createElement('button');
+        btn.className = 'novel-float-btn';
+        btn.id = 'novel-float-btn';
+        btn.title = '提取小说信息';
+        btn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+        `;
+        document.body.appendChild(btn);
+
+        btn.addEventListener('click', () => {
+            const novelData = parseSosadThread(document.documentElement.outerHTML);
+            if (novelData.name) {
+                createModal(novelData);
+            } else {
+                showToast('未检测到小说信息');
+            }
+        });
+    }
+
     function createModal(novelData) {
+        const existingModal = document.getElementById('novel-info-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
         const overlay = document.createElement('div');
         overlay.className = 'novel-modal-overlay';
         overlay.id = 'novel-info-modal';
@@ -335,12 +390,7 @@
 
     function init() {
         addStyles();
-
-        const novelData = parseSosadThread(document.documentElement.outerHTML);
-
-        if (novelData.name) {
-            setTimeout(() => createModal(novelData), 500);
-        }
+        createFloatButton();
     }
 
     if (document.readyState === 'loading') {
