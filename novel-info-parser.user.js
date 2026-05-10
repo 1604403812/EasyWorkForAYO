@@ -159,7 +159,7 @@
             }
             .novel-buttons {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr;
                 gap: 10px;
                 margin-top: 20px;
             }
@@ -227,24 +227,10 @@
     }
 
     function formatCopyText(data) {
-        const tags = data.tag.map(t => t.label).join(', ');
-        return `【小说信息】
-小说ID: ${data.novelId}
-小说名: ${data.name}
-作者: ${data.author.name}
-平台: 晋江文学城
-链接: ${data.url}
-简介: ${data.desc}
-标签: ${tags || '无'}
-字数: ${parseInt(data.wordCount).toLocaleString()}字
-发布时间: ${data.publish_datetime}`;
-    }
-
-    function formatCopyJSON(data) {
         return JSON.stringify(data, null, 2);
     }
 
-    function copyToClipboard(text, type) {
+    function copyToClipboard(text) {
         if (typeof GM_setClipboard !== 'undefined') {
             GM_setClipboard(text);
         } else {
@@ -257,7 +243,7 @@
             document.execCommand('copy');
             document.body.removeChild(textarea);
         }
-        showToast(type === 'text' ? '文本信息已复制到剪贴板' : 'JSON数据已复制到剪贴板');
+        showToast('JSON数据已复制到剪贴板');
     }
 
     function createModal() {
@@ -315,14 +301,7 @@
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
-                        复制文本
-                    </button>
-                    <button class="novel-btn novel-btn-copy-all" id="novel-copy-json-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="16 18 22 12 16 6"></polyline>
-                            <polyline points="8 6 2 12 8 18"></polyline>
-                        </svg>
-                        复制JSON
+                        复制JSON信息
                     </button>
                 </div>
             </div>
@@ -341,11 +320,7 @@
         });
 
         document.getElementById('novel-copy-btn').addEventListener('click', () => {
-            copyToClipboard(formatCopyText(NOVEL_DATA), 'text');
-        });
-
-        document.getElementById('novel-copy-json-btn').addEventListener('click', () => {
-            copyToClipboard(formatCopyJSON(NOVEL_DATA), 'json');
+            copyToClipboard(formatCopyText(NOVEL_DATA));
         });
     }
 
