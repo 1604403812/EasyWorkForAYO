@@ -223,8 +223,14 @@
         const nameEl = doc.querySelector('a.font-1');
         const name = nameEl ? nameEl.textContent.trim() : '';
 
-        const authorEl = doc.querySelector('.article-body .h5 > div > div > span.majia');
-        const authorName = authorEl ? authorEl.textContent.trim() : '';
+        const authorContainer = doc.querySelector('.article-body .h5 > div > div');
+        let authorName = '';
+        if (authorContainer) {
+            const majiaEl = authorContainer.querySelector('span.majia');
+            const authorEl = authorContainer.querySelector('a');
+            authorName = (majiaEl ? majiaEl.textContent.trim() : '') ||
+                         (authorEl ? authorEl.textContent.trim() : '');
+        }
 
         const descEl = doc.querySelector('.article-title .h5');
         const desc = descEl ? descEl.textContent.trim() : '';
