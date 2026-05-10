@@ -223,13 +223,21 @@
         const nameEl = doc.querySelector('a.font-1');
         const name = nameEl ? nameEl.textContent.trim() : '';
 
-        const authorContainer = doc.querySelector('.article-body .h5 > div > div');
         let authorName = '';
+        let authorUrl = '';
+        const majiaContainer = doc.querySelector('.article-body .h5 > div > div');
+        const authorContainer = doc.querySelector('.article-body .h5 > div > a') || majiaContainer;
+        
         if (authorContainer) {
             const majiaEl = authorContainer.querySelector('span.majia');
             const authorEl = authorContainer.querySelector('a');
-            authorName = (majiaEl ? majiaEl.textContent.trim() : '') ||
-                         (authorEl ? authorEl.textContent.trim() : '');
+            
+            if (majiaEl) {
+                authorName = majiaEl.textContent.trim();
+            } else if (authorEl) {
+                authorName = authorEl.textContent.trim();
+                authorUrl = authorEl.getAttribute('href') || '';
+            }
         }
 
         const descEl = doc.querySelector('.article-title .h5');
@@ -279,7 +287,8 @@
             name: name,
             author: {
                 id: 0,
-                name: authorName
+                name: authorName,
+                url: authorUrl
             },
             cover: '',
             desc: desc,
