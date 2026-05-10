@@ -242,12 +242,27 @@
         });
 
         let publish_datetime = '';
-        const timeEl = doc.querySelector('.grayout');
-        if (timeEl) {
-            const timeText = timeEl.textContent;
-            const dateMatch = timeText.match(/发表于(.+?)(?:$|修改于)/);
-            if (dateMatch) {
-                publish_datetime = dateMatch[1].trim();
+        let wordCount = 0;
+        const table = doc.querySelector('table.table');
+        if (table) {
+            const tbody = table.querySelector('tbody');
+            if (tbody) {
+                const rows = tbody.querySelectorAll('tr');
+                if (rows.length > 0) {
+                    const firstRow = rows[0];
+                    const cells = firstRow.querySelectorAll('th, td');
+                    if (cells.length >= 4) {
+                        publish_datetime = cells[3].textContent.trim();
+                    }
+                }
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('th, td');
+                    if (cells.length >= 3) {
+                        const wordText = cells[2].textContent.trim();
+                        const wordNum = parseInt(wordText) || 0;
+                        wordCount += wordNum;
+                    }
+                });
             }
         }
 
@@ -263,7 +278,7 @@
             cover: '',
             desc: desc,
             info: info,
-            wordCount: '0',
+            wordCount: wordCount.toString(),
             tag: tag,
             newTag: [],
             publish_datetime: publish_datetime,
@@ -349,6 +364,10 @@
                     <div class="novel-info-section">
                         <div class="novel-info-label">标签</div>
                         <div class="novel-tags">${tagsHtml || '<span style="color: #999;">暂无标签</span>'}</div>
+                    </div>
+                    <div class="novel-info-section">
+                        <div class="novel-info-label">字数</div>
+                        <div class="novel-info-value">${parseInt(novelData.wordCount).toLocaleString()} 字</div>
                     </div>
                     <div class="novel-info-section">
                         <div class="novel-info-label">发布时间</div>
