@@ -223,7 +223,7 @@
         const nameEl = doc.querySelector('a.font-1');
         const name = nameEl ? nameEl.textContent.trim() : '';
 
-        const authorEl = doc.querySelector('span.majia');
+        const authorEl = doc.querySelector('.article-body .h5 > div > div > span.majia');
         const authorName = authorEl ? authorEl.textContent.trim() : '';
 
         const descEl = doc.querySelector('.article-title .h5');
